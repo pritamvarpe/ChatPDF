@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ChatPDF</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="shell">
+        <section class="panel upload-panel">
+            <div>
+                <p class="eyebrow">Local RAG Demo</p>
+                <h1>ChatPDF</h1>
+                <p class="subtitle">Upload a PDF, index it locally, then ask questions answered with retrieved document context.</p>
+            </div>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="alerts">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="post" enctype="multipart/form-data" class="upload-form">
+                <input type="file" name="pdf" accept="application/pdf" required>
+                <button type="submit">Upload PDF</button>
+            </form>
+
+            {% if document_name %}
+                <p class="document">Indexed document: <strong>{{ document_name }}</strong></p>
+            {% endif %}
+        </section>
+
+        <section class="panel chat-panel">
+            <form method="post" class="question-form">
+                <label for="question">Question</label>
+                <textarea id="question" name="question" rows="4" placeholder="Ask something from the uploaded PDF..." required>{{ question or "" }}</textarea>
+                <button type="submit">Ask</button>
+            </form>
+
+            {% if answer %}
+                <article class="answer">
+                    <h2>Answer</h2>
+                    <p>{{ answer }}</p>
+                </article>
+            {% endif %}
+
+            {% if chat_history %}
+                <section class="history">
+                    <h2>Chat History</h2>
+                    {% for item in chat_history|reverse %}
+                        <article class="history-item">
+                            <h3>{{ item.question }}</h3>
+                            <p>{{ item.answer }}</p>
+                        </article>
+                    {% endfor %}
+                </section>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>
